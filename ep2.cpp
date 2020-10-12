@@ -30,7 +30,9 @@ typedef struct estrutura {
 void exibir(NO* p) {
     NO* elemento = p;
     while(elemento) {
-        printf("%i ", elemento->valor);
+       
+        if(elemento->tipo == 1) printf("%c",elemento->simbolo);
+        else printf("%f", elemento->valor);
         elemento = elemento->prox;
     }
 }
@@ -47,31 +49,32 @@ NO* ultimo(NO* p){
     return NULL;
 }
 
-
-void inserir(char ch, NO* p, int tipo) {
-    NO* novo;
-    NO* ant;
+void push(char ch, NO* p,int tipo) {
+    NO* novo = (NO*) malloc(sizeof(NO));
     
-    ant = ultimo(p);
-    novo = (NO*) malloc(sizeof(NO));
-    novo->prox = NULL;
     if(tipo == 1){
-        //printf("char");
         novo->simbolo = ch;
         novo->tipo = tipo;
     }
     else{
-        //printf("float");
         ch=ch-48;
         novo->tipo = tipo;
-        novo->valor = ch;
+        novo->valor = (float) ch;
     } 
-    
+    novo->prox = p;
+    p = novo;
+    exibir(p);
+}
 
-    if(!ant) 
-        p = novo;
-    else 
-        ant->prox = novo;
+int pop(NO* p) {
+    NO* aux;
+    if(!p) return(-1);
+    int tipo = p->tipo;
+    aux = p;
+    char ch = tipo == 1 ? p->simbolo : p-> valor;
+    p = p->prox;
+    free(aux);
+    return(ch);
 }
 
 
@@ -86,18 +89,20 @@ void calcular(char* expressao, int* codigo){
 	float resp = 0.0;
 	*codigo = 999; 
 
-    NO* p;
+    NO* p = NULL;
 	for(int i =0; i<strlen(expressao);i++)
     {
         if( expressao[i] == '(' || expressao[i] == ')' || expressao[i] == '*' || expressao[i] == '/' || expressao[i] == '-' || expressao[i] == '+'){  
-            inserir(expressao[i],p,1);
+            
+            push(expressao[i],p,1);
         }
         else{
-            inserir(expressao[i],p,2);
+            
+            push(expressao[i],p,2);
         }
     }
-
-   printf("%c",p);
+    
+   
 	//return resp;
 }
 
@@ -123,6 +128,7 @@ int main() {
    
 	int codigo;
     calcular(exp,&codigo);
+   
 	//float resp = calcular(exp,&codigo);
 
 
