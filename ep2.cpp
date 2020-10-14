@@ -29,8 +29,7 @@ typedef struct estrutura {
 
 void exibir(NO* p) {
     NO* elemento = p;
-    while(elemento) {
-       
+    while(elemento) {  
         if(elemento->tipo == 1) printf("%c",elemento->simbolo);
         else printf("%f", elemento->valor);
         elemento = elemento->prox;
@@ -63,18 +62,26 @@ void push(char ch, NO* p,int tipo) {
     } 
     novo->prox = p;
     p = novo;
+   
     exibir(p);
 }
 
-int pop(NO* p) {
+char pop(NO* p) {
     NO* aux;
     if(!p) return(-1);
     int tipo = p->tipo;
     aux = p;
-    char ch = tipo == 1 ? p->simbolo : p-> valor;
     p = p->prox;
-    free(aux);
-    return(ch);
+    if(tipo == 1){
+        float ch = p->valor;
+        free(aux);
+        return(ch);
+    } 
+    else{
+        char ch = p->simbolo;
+        free(aux);
+        return(ch);
+    }   
 }
 
 
@@ -101,7 +108,15 @@ void calcular(char* expressao, int* codigo){
             push(expressao[i],p,2);
         }
     }
+
+
+    exibir(p);
+    // while (p)
+    // {
+    //     if(p->);
+    // }
     
+    printf("%d",p->tipo);
    
 	//return resp;
 }
@@ -119,15 +134,16 @@ int main() {
 	char exp[200];
 	strcpy(exp, "(7*5)");
 
-    for(int i =0; i<strlen(exp);i++)
-    {
-        printf("%c",exp[i]);
-    }
+    // for(int i =0; i<strlen(exp);i++)
+    // {
+    //     printf("%c",exp[i]);
+    // }
     
        
    
 	int codigo;
     calcular(exp,&codigo);
+    
    
 	//float resp = calcular(exp,&codigo);
 
