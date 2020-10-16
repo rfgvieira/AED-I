@@ -85,19 +85,21 @@ NO* listaNumerada(int n){
 void moverParaFim(LISTA* l, NO* p){
     NO* ult = ultimo(l);
     if(p != ult){
-        printf("\nInicio:%d P:%d",l->inicio->chave,p->chave);
         if(p == l->inicio){
             l->inicio =  p->prox;
+            p->prox->ant = NULL;
         }
-        printf("\nInicio:%d P:%d",l->inicio->chave,p->chave);
-        p->prox->ant = p->ant;
-    
-        p->ant->prox = p->prox;
+        else
+        {
+            p->prox->ant = p->ant;
+            p->ant->prox = p->prox;
+        }
+        
         ult->prox = p;
         p->ant = ult;
         p->prox = NULL;
+       
     }
-
 }
 
 int main(){
@@ -114,9 +116,11 @@ int main(){
     exibir(&l1);
 
     //exibir(listaNumerada(12));
-    moverParaFim(&l1,l1.inicio);
     printf("\nDepois:");
+    moverParaFim(&l1,l1.inicio);
     exibir(&l1);
+    
+   
 
 
 

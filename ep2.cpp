@@ -48,7 +48,7 @@ NO* ultimo(NO* p){
     return NULL;
 }
 
-void push(char ch, NO* p,int tipo) {
+void push(char ch, NO* *p,int tipo) {
     NO* novo = (NO*) malloc(sizeof(NO));
     
     if(tipo == 1){
@@ -60,10 +60,10 @@ void push(char ch, NO* p,int tipo) {
         novo->tipo = tipo;
         novo->valor = (float) ch;
     } 
-    novo->prox = p;
-    p = novo;
+    novo->prox = *p;
+    *p = novo;
    
-    exibir(p);
+    //exibir(p);
 }
 
 char pop(NO* p) {
@@ -73,12 +73,12 @@ char pop(NO* p) {
     aux = p;
     p = p->prox;
     if(tipo == 1){
-        float ch = p->valor;
+        float ch = p->simbolo;
         free(aux);
         return(ch);
     } 
     else{
-        char ch = p->simbolo;
+        char ch = p->valor;
         free(aux);
         return(ch);
     }   
@@ -95,28 +95,29 @@ void calcular(char* expressao, int* codigo){
 
 	float resp = 0.0;
 	*codigo = 999; 
-
+    int n1,n2;
     NO* p = NULL;
 	for(int i =0; i<strlen(expressao);i++)
     {
-        if( expressao[i] == '(' || expressao[i] == ')' || expressao[i] == '*' || expressao[i] == '/' || expressao[i] == '-' || expressao[i] == '+'){  
+        if( expressao[i] == '('  || expressao[i] == '*' || expressao[i] == '/' || expressao[i] == '-' || expressao[i] == '+'){  
             
-            push(expressao[i],p,1);
+            push(expressao[i],&p,1);
+        }
+        else if( expressao[i] == ')'){
+             push(expressao[i],&p,1);
+             while(p->simbolo!= '('){
+                 pop(p);
+             }
         }
         else{
             
-            push(expressao[i],p,2);
+            push(expressao[i],&p,2);
         }
     }
 
-
-    exibir(p);
-    // while (p)
-    // {
-    //     if(p->);
-    // }
     
-    printf("%d",p->tipo);
+    
+    exibir(p);
    
 	//return resp;
 }
