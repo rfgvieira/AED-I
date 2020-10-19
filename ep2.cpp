@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <malloc.h>
 #include <string.h>
 
@@ -26,100 +25,128 @@ typedef struct estrutura {
        	};
 } NO;
 
-
-void exibir(NO* p) {
-    NO* elemento = p;
-    while(elemento) {  
-        if(elemento->tipo == 1) printf("%c",elemento->simbolo);
-        else printf("%f", elemento->valor);
-        elemento = elemento->prox;
-    }
-}
-
-NO* ultimo(NO* p){
-    NO* elemento = p;
-
-    while(elemento) {
-        if(elemento->prox == NULL){
-            return elemento;
-        }
-        elemento = elemento->prox;
-    }
-    return NULL;
-}
-
-void push(char ch, NO* *p,int tipo) {
+void push(float ch, NO* *p,int tipo) { //Função para colocar os elementos numa pilha
     NO* novo = (NO*) malloc(sizeof(NO));
     
-    if(tipo == 1){
-        novo->simbolo = ch;
+    if(tipo == 1) {
+        novo->simbolo =(char) ch;
         novo->tipo = tipo;
     }
-    else{
-        ch=ch-48;
+    else if(tipo == 2) {
+        ch = ch-48;
         novo->tipo = tipo;
         novo->valor = (float) ch;
     } 
+    else{
+
+        novo->tipo = 2;
+        novo->valor = (float) ch;
+    }
+
     novo->prox = *p;
     *p = novo;
-   
-    //exibir(p);
 }
-
-char pop(NO* p) {
-    NO* aux;
-    if(!p) return(-1);
-    int tipo = p->tipo;
-    aux = p;
-    p = p->prox;
-    if(tipo == 1){
-        float ch = p->simbolo;
-        free(aux);
-        return(ch);
-    } 
-    else{
-        char ch = p->valor;
-        free(aux);
-        return(ch);
-    }   
-}
-
-
 
 //------------------------------------------
 // O EP consiste em implementar esta funcao
 // e outras funcoes auxiliares que esta
 // necessitar
 //------------------------------------------
-void calcular(char* expressao, int* codigo){
-
+float calcular(char* expressao, int* codigo) {
+    //Variáveis de retorno
+    *codigo = 999; 
 	float resp = 0.0;
-	*codigo = 999; 
-    int n1,n2;
+
+    //Variáveis auxiliares
+    float n2 = 0.0;
+    char op;
     NO* p = NULL;
-	for(int i =0; i<strlen(expressao);i++)
-    {
-        if( expressao[i] == '('  || expressao[i] == '*' || expressao[i] == '/' || expressao[i] == '-' || expressao[i] == '+'){  
-            
+	
+
+	for(int i =0; i<strlen(expressao);i++) {
+        //Inserção dos elementos na pilha
+        if(expressao[i] == '(' || expressao[i] == '*' || expressao[i] == '/' || expressao[i] == '-' || expressao[i] == '+')
             push(expressao[i],&p,1);
-        }
-        else if( expressao[i] == ')'){
-             push(expressao[i],&p,1);
-             while(p->simbolo!= '('){
-                 pop(p);
-             }
+        else if( expressao[i] == ')')
+            push(expressao[i],&p,1);
+        else
+            push(expressao[i],&p,2);
+
+        //Realização dos cálculos parciais a partir do primeiro fecha parenteses encontrado
+        if(p->simbolo == ')') {
+            int flag = 1;
+
+            //Liberação dos nós
+            NO* aux = p;
+            p = p->prox;
+            free(aux);
+
+            while (flag != 5) {
+                if(flag == 1 && p->tipo == 2){
+                    NO* aux = p;
+                    p = p->prox;
+                    n2 = aux->valor;
+                    free(aux);
+                }
+                else if(flag == 2 && p->tipo == 1 && p->simbolo != '('){
+                    NO* aux = p;
+                    p = p->prox;
+                    op =aux->simbolo;
+                    free(aux);
+                    
+                }
+                else if(flag == 3 && p ->tipo == 2){
+                    NO* aux = p;
+                    p = p->prox;
+                    resp =aux->valor;
+                    free(aux);
+                }
+                else if(flag == 4 && p->tipo == 1 && p->simbolo == '('){
+                    NO* aux = p;
+                    p = p->prox;
+                    free(aux);
+                }
+                else{
+                    *codigo = -1;
+                    resp = 0;
+                }
+                flag++;
+            }
+
+            switch (op) {
+            case '+':
+                resp += n2;
+                *codigo = 1;
+                break;
+            case '-':
+                resp -= n2;
+                *codigo = 1;
+                break;
+            case '*':
+                resp *= n2;
+                *codigo = 1;
+                break;
+            case '/':
+                if(n2 == 0)  {
+                    *codigo = 0;
+                    return resp = 0;
+                } 
+                else 
+                    resp /= n2;
+                    *codigo = 1;
+                break;
+            default:
+                break;
+            }
+
+            push(resp, &p, 3);//Inserção do resultado do cálculo parcial para a pilha
         }
         else{
-            
-            push(expressao[i],&p,2);
+            *codigo = -1;
         }
-    }
-
-    
-    
-    exibir(p);
-   
-	//return resp;
+        
+    }    
+	return resp;
 }
 
 
@@ -135,19 +162,8 @@ int main() {
 	char exp[200];
 	strcpy(exp, "(7*5)");
 
-    // for(int i =0; i<strlen(exp);i++)
-    // {
-    //     printf("%c",exp[i]);
-    // }
-    
-       
-   
 	int codigo;
-    calcular(exp,&codigo);
-    
-   
-	//float resp = calcular(exp,&codigo);
-
+    float resp = calcular(exp,&codigo);
 
 }
 
