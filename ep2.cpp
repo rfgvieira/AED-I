@@ -82,6 +82,12 @@ float calcular(char* expressao, int* codigo) {
             free(aux);
 
             while (flag != 5) {
+
+                if(!p){
+                    *codigo = -1;
+                     return resp = -1;
+                }
+
                 if(flag == 1 && p->tipo == 2){
                     NO* aux = p;
                     p = p->prox;
@@ -108,7 +114,7 @@ float calcular(char* expressao, int* codigo) {
                 }
                 else{
                     *codigo = -1;
-                    resp = 0;
+                    return resp = -1;
                 }
                 flag++;
             }
@@ -129,7 +135,7 @@ float calcular(char* expressao, int* codigo) {
             case '/':
                 if(n2 == 0)  {
                     *codigo = 0;
-                    return resp = 0;
+                    return resp = -1;
                 } 
                 else 
                     resp /= n2;
@@ -142,6 +148,7 @@ float calcular(char* expressao, int* codigo) {
             push(resp, &p, 3);//Inserção do resultado do cálculo parcial para a pilha
         }
         else{
+            resp = -1;
             *codigo = -1;
         }
         
@@ -160,10 +167,11 @@ int main() {
 	// o EP sera testado com chamadas deste tipo
 
 	char exp[200];
-	strcpy(exp, "(7*5)");
+	strcpy(exp, "(1*(((1+(2*4))-6)/6))");//fazer essa verificação
 
 	int codigo;
     float resp = calcular(exp,&codigo);
+    printf("Codigo:%d Resp:%f",codigo,resp);
 
 }
 
