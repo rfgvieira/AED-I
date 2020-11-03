@@ -62,7 +62,6 @@ float calcular(char* expressao, int* codigo) {
     char op;
     NO* p = NULL;
 	
-
 	for(int i =0; i<strlen(expressao);i++) {
         //Inserção dos elementos na pilha
         if(expressao[i] == '(' || expressao[i] == '*' || expressao[i] == '/' || expressao[i] == '-' || expressao[i] == '+')
@@ -118,31 +117,30 @@ float calcular(char* expressao, int* codigo) {
                 }
                 flag++;
             }
-
             switch (op) {
-            case '+':
-                resp += n2;
-                *codigo = 1;
-                break;
-            case '-':
-                resp -= n2;
-                *codigo = 1;
-                break;
-            case '*':
-                resp *= n2;
-                *codigo = 1;
-                break;
-            case '/':
-                if(n2 == 0)  {
-                    *codigo = 0;
-                    return resp = -1;
-                } 
-                else 
-                    resp /= n2;
+                case '+':
+                    resp += n2;
                     *codigo = 1;
-                break;
-            default:
-                break;
+                    break;
+                case '-':
+                    resp -= n2;
+                    *codigo = 1;
+                    break;
+                case '*':
+                    resp *= n2;
+                    *codigo = 1;
+                    break;
+                case '/':
+                    if(n2 == 0)  {
+                        *codigo = 0;
+                        return resp = -1;
+                    } 
+                    else 
+                        resp /= n2;
+                        *codigo = 1;
+                    break;
+                default:
+                    break;
             }
 
             push(resp, &p, 3);//Inserção do resultado do cálculo parcial para a pilha
@@ -151,7 +149,6 @@ float calcular(char* expressao, int* codigo) {
             resp = -1;
             *codigo = -1;
         }
-        
     }    
 	return resp;
 }
@@ -167,7 +164,7 @@ int main() {
 	// o EP sera testado com chamadas deste tipo
 
 	char exp[200];
-	strcpy(exp, "(1*(((1+(2*4))-6)/6))");//fazer essa verificação
+	strcpy(exp, "(10-((20/0)+4))");//fazer essa verificação
 
 	int codigo;
     float resp = calcular(exp,&codigo);
