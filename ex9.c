@@ -44,7 +44,6 @@ void inserir(MATRIZ* m, int val, int l, int c){
     novo->prox = NULL;
     if(!ult) m->inicio = novo;
     else ult->prox = novo;
-
 }
 
 int valor(MATRIZ* m, int i, int j){
